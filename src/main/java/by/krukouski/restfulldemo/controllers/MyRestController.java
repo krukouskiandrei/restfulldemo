@@ -58,4 +58,25 @@ public class MyRestController {
         return new ResponseEntity<>(headers, HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "/user/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<User> updateUser(@PathVariable long id,
+                                           @RequestBody User user) {
+        log.info("Updating User " + id);
+
+        User currentUser = userService.findById(id);
+
+        if(currentUser == null) {
+            log.warn("User with id " + id + " not found");
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        }
+
+        currentUser.setName(user.getName());
+        currentUser.setAge(user.getAge());
+        currentUser.setSalary(user.getSalary());
+
+        userService.updateUser(currentUser);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
