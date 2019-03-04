@@ -13,6 +13,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+
 @RestController
 public class MyRestController {
 
@@ -36,7 +40,7 @@ public class MyRestController {
         User user = userService.findById(id);
         if (user == null) {
             log.debug("user with id " + id + " not found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
@@ -67,7 +71,7 @@ public class MyRestController {
 
         if(currentUser == null) {
             log.warn("User with id " + id + " not found");
-            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<User>(NOT_FOUND);
         }
 
         currentUser.setName(user.getName());
@@ -77,6 +81,30 @@ public class MyRestController {
         userService.updateUser(currentUser);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/user/{id}", method = DELETE)
+    public ResponseEntity<User> deleteUser(@PathVariable long id) {
+        log.info("Deleting user by id " + id);
+
+        User user = userService.findById(id);
+
+        if (user == null) {
+            log.info("Unable to delete. User with id " + id
+            + " not found");
+            return new ResponseEntity<>(NOT_FOUND);
+        }
+
+        userService.deleteUserBuId(id);
+        return new ResponseEntity<>(OK);
+    }
+
+    @RequestMapping(value = "/user/", method = DELETE)
+    public ResponseEntity<User> deleteAllUsers() {
+        log.info("Deleting all users");
+
+        userService.deleteAllUsers();
+        return new ResponseEntity<>(OK);
     }
 
 }
