@@ -19,6 +19,12 @@ public class User {
         this.salary = salary;
     }
 
+    public User(String name, int age, double salary) {
+        this.name = name;
+        this.age = age;
+        this.salary = salary;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
